@@ -1,15 +1,15 @@
-import React, { useMemo } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  ScrollView,
-  Image,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
+import React, { useMemo } from "react";
+import {
+    Image,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type Review = {
   id: string;
@@ -134,7 +134,7 @@ function Stars({ rating }: { rating: number }) {
 
 function AvailabilityGrid() {
   const cols = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  const rows = ["9 AM", "12 PM", "3 PM", "6 PM"];
+  const rows = ["9 AM", "10 AM", "11 AM", "12 PM", "1 PM", "2 PM", "3 PM", "4 PM", "5 PM"];
 
   return (
     <View style={styles.grid}>
@@ -168,17 +168,17 @@ export default function Seller() {
 
   const seller = useMemo(
     () => SELLERS.find((s) => s.id === sellerId) ?? SELLERS[0],
-    [sellerId]
+    [sellerId],
   );
 
   return (
     <SafeAreaView style={styles.safe}>
       {/* Back */}
-      <View style={styles.topBar}>
+      {/* <View style={styles.topBar}>
         <Pressable onPress={() => router.back()} style={styles.backBtn}>
           <Ionicons name="arrow-back" size={22} color="#111" />
         </Pressable>
-      </View>
+      </View> */}
 
       <ScrollView contentContainerStyle={{ paddingBottom: 140 }}>
         {/* Profile header */}

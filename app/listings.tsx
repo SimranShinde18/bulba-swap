@@ -84,14 +84,14 @@ export default function Listings() {
     <SafeAreaView style={styles.safe}>
       {/* Header */}
       <View style={styles.header}>
-        <Pressable
+        {/* <Pressable
           onPress={() => router.back()}
           style={styles.headerBtn}
           accessibilityRole="button"
           accessibilityLabel="Go back"
         >
           <Ionicons name="arrow-back" size={22} color="#111" />
-        </Pressable>
+        </Pressable> */}
 
         <View style={styles.headerTitleWrap}>
           <Text style={styles.headerTitle}>

@@ -1,17 +1,30 @@
-import React, { useMemo, useState } from "react";
+import { Ionicons } from "@expo/vector-icons";
+import { useLocalSearchParams } from "expo-router";
+import React, { useCallback, useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  TextInput,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
+    Alert,
+    KeyboardAvoidingView,
+    Platform,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
-import { router, useLocalSearchParams } from "expo-router";
+
+// Conditionally import speech recognition (only works in dev builds, not Expo Go)
+let ExpoSpeechRecognitionModule: any = null;
+let useSpeechRecognitionEvent: any = () => {};
+
+try {
+  const speechModule = require("expo-speech-recognition");
+  ExpoSpeechRecognitionModule = speechModule.ExpoSpeechRecognitionModule;
+  useSpeechRecognitionEvent = speechModule.useSpeechRecognitionEvent;
+} catch (e) {
+  console.log("Speech recognition not available (requires dev build)");
+}
 
 type ChatMessage = {
   id: string;
@@ -34,6 +47,7 @@ export default function Chat() {
     typeof params.condition === "string" ? params.condition : "Excellent";
 
   const [input, setInput] = useState("");
+  const [isListening, setIsListening] = useState(false);
 
   const [messages, setMessages] = useState<ChatMessage[]>([
     { id: "m1", from: "them", text: "Sure" },
@@ -45,6 +59,55 @@ export default function Chat() {
   ]);
 
   const canSend = input.trim().length > 0;
+
+  // Speech recognition handlers (only if module is available)
+  if (ExpoSpeechRecognitionModule) {
+    useSpeechRecognitionEvent("result", (event: any) => {
+      const text = event.results[0]?.transcript || "";
+      setInput((prev) => prev + (prev ? " " : "") + text);
+    });
+
+    useSpeechRecognitionEvent("end", () => {
+      setIsListening(false);
+    });
+
+    useSpeechRecognitionEvent("error", () => {
+      setIsListening(false);
+    });
+  }
+
+  const handleMicPress = useCallback(async () => {
+    if (!ExpoSpeechRecognitionModule) {
+      Alert.alert(
+        "Not Available",
+        "Voice input requires a development build. Run 'npx expo run:android' or 'npx expo run:ios'."
+      );
+      return;
+    }
+
+    if (isListening) {
+      await ExpoSpeechRecognitionModule.stop();
+      setIsListening(false);
+      return;
+    }
+
+    try {
+      const result = await ExpoSpeechRecognitionModule.requestPermissionsAsync();
+      if (!result.granted) {
+        Alert.alert("Permission Required", "Please allow microphone access.");
+        return;
+      }
+      setIsListening(true);
+      await ExpoSpeechRecognitionModule.start({
+        lang: "en-AU",
+        interimResults: true,
+        maxAlternatives: 1,
+      });
+    } catch (error) {
+      setIsListening(false);
+      Alert.alert("Error", "Voice input not available.");
+    }
+  }, [isListening]);
 
   const send = () => {
     const text = input.trim();
@@ -61,14 +124,14 @@ export default function Chat() {
     <SafeAreaView style={styles.safe}>
       {/* Header */}
       <View style={styles.header}>
-        <Pressable
-          onPress={() => router.back()}
-          style={styles.headerBtn}
-          accessibilityRole="button"
-          accessibilityLabel="Go back"
-        >
-          <Ionicons name="arrow-back" size={22} color="#111" />
-        </Pressable>
+        {/* <Pressable
+        onPress={() => router.back()}
+        style={styles.headerBtn}
+        accessibilityRole="button"
+        accessibilityLabel="Go back"
+      >
+        <Ionicons name="arrow-back" size={22} color="#111" />
+      </Pressable> */}
 
         <View style={{ flex: 1, alignItems: "center" }}>
           <Text style={styles.headerTitle}>{sellerName}</Text>
@@ -120,11 +183,15 @@ export default function Chat() {
         <View style={styles.inputBar}>
           <Pressable
             style={styles.iconCircle}
-            onPress={() => console.log("Mic")}
+            onPress={handleMicPress}
             accessibilityRole="button"
-            accessibilityLabel="Voice message"
+            accessibilityLabel={isListening ? "Stop listening" : "Voice message"}
           >
-            <Ionicons name="mic-outline" size={18} color="#111" />
+            <Ionicons
+              name={isListening ? "mic" : "mic-outline"}
+              size={18}
+              color={isListening ? "#E53935" : "#111"}
+            />
           </Pressable>
 
           <TextInput

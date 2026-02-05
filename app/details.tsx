@@ -1,16 +1,16 @@
-import React, { useMemo, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  Image,
-  ScrollView,
-  Dimensions,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
+import React, { useMemo, useState } from "react";
+import {
+    Dimensions,
+    Image,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type Listing = {
   id: string;
@@ -67,7 +67,7 @@ function Stars({ rating }: { rating: number }) {
 function AvailabilityGrid() {
   // Simple “visual” grid placeholder like your mock
   const cols = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  const rows = ["9AM", "12PM", "3PM", "6PM"];
+  const rows = ["9 AM", "10 AM", "11 AM", "12 PM", "1 PM", "2 PM", "3 PM", "4 PM", "5 PM"];
 
   return (
     <View style={styles.grid}>
@@ -101,7 +101,7 @@ export default function Details() {
 
   const item = useMemo(
     () => LISTINGS.find((x) => x.id === id) ?? LISTINGS[0],
-    [id]
+    [id],
   );
 
   const [activeImage, setActiveImage] = useState(item.images[0]);
@@ -111,7 +111,7 @@ export default function Details() {
   return (
     <SafeAreaView style={styles.safe}>
       {/* Header (Back) */}
-      <View style={styles.topBar}>
+      {/* <View style={styles.topBar}>
         <Pressable
           onPress={() => router.back()}
           style={styles.backBtn}
@@ -120,7 +120,7 @@ export default function Details() {
         >
           <Ionicons name="arrow-back" size={22} color="#111" />
         </Pressable>
-      </View>
+      </View> */}
 
       <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
         {/* Main image */}

@@ -1,8 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import {
-    Alert,
+    Image,
     KeyboardAvoidingView,
     Platform,
     Pressable,
@@ -13,18 +13,6 @@ import {
     View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-// Conditionally import speech recognition (only works in dev builds, not Expo Go)
-let ExpoSpeechRecognitionModule: any = null;
-let useSpeechRecognitionEvent: any = () => {};
-
-try {
-  const speechModule = require("expo-speech-recognition");
-  ExpoSpeechRecognitionModule = speechModule.ExpoSpeechRecognitionModule;
-  useSpeechRecognitionEvent = speechModule.useSpeechRecognitionEvent;
-} catch (e) {
-  console.log("Speech recognition not available (requires dev build)");
-}
 
 type ChatMessage = {
   id: string;
@@ -45,69 +33,29 @@ export default function Chat() {
       : "Chess Board";
   const condition =
     typeof params.condition === "string" ? params.condition : "Excellent";
+  
+  // Product and seller images
+  const productImage = "https://images.unsplash.com/photo-1529699211952-734e80c4d42b?auto=format&fit=crop&w=300&q=60";
+  const sellerAvatar = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=60";
 
   const [input, setInput] = useState("");
-  const [isListening, setIsListening] = useState(false);
 
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { id: "m1", from: "them", text: "Sure" },
     {
-      id: "m2",
+      id: "m1",
       from: "me",
-      text: "Hi! Can I exchange Monopoly for the chess board?",
+      text: "Hi! I'm interested in your chess board. Would you be open to exchanging it for my Monopoly set?",
     },
+    { id: "m2", from: "them", text: "Hi there! Yes, I'd be interested in that trade. Is your Monopoly set complete with all pieces?" },
+    {
+      id: "m3",
+      from: "me",
+      text: "Yes! It's complete with all money, property cards, houses, hotels, and game pieces. Only used a few times.",
+    },
+    { id: "m4", from: "them", text: "Sounds great! When would you be available to meet for the swap?" },
   ]);
 
   const canSend = input.trim().length > 0;
-
-  // Speech recognition handlers (only if module is available)
-  if (ExpoSpeechRecognitionModule) {
-    useSpeechRecognitionEvent("result", (event: any) => {
-      const text = event.results[0]?.transcript || "";
-      setInput((prev) => prev + (prev ? " " : "") + text);
-    });
-
-    useSpeechRecognitionEvent("end", () => {
-      setIsListening(false);
-    });
-
-    useSpeechRecognitionEvent("error", () => {
-      setIsListening(false);
-    });
-  }
-
-  const handleMicPress = useCallback(async () => {
-    if (!ExpoSpeechRecognitionModule) {
-      Alert.alert(
-        "Not Available",
-        "Voice input requires a development build. Run 'npx expo run:android' or 'npx expo run:ios'."
-      );
-      return;
-    }
-
-    if (isListening) {
-      await ExpoSpeechRecognitionModule.stop();
-      setIsListening(false);
-      return;
-    }
-
-    try {
-      const result = await ExpoSpeechRecognitionModule.requestPermissionsAsync();
-      if (!result.granted) {
-        Alert.alert("Permission Required", "Please allow microphone access.");
-        return;
-      }
-      setIsListening(true);
-      await ExpoSpeechRecognitionModule.start({
-        lang: "en-AU",
-        interimResults: true,
-        maxAlternatives: 1,
-      });
-    } catch (error) {
-      setIsListening(false);
-      Alert.alert("Error", "Voice input not available.");
-    }
-  }, [isListening]);
 
   const send = () => {
     const text = input.trim();
@@ -121,38 +69,23 @@ export default function Chat() {
   };
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={styles.safe} edges={["bottom"]}>
       {/* Header */}
       <View style={styles.header}>
-        {/* <Pressable
-        onPress={() => router.back()}
-        style={styles.headerBtn}
-        accessibilityRole="button"
-        accessibilityLabel="Go back"
-      >
-        <Ionicons name="arrow-back" size={22} color="#111" />
-      </Pressable> */}
-
-        <View style={{ flex: 1, alignItems: "center" }}>
+        <Image source={{ uri: sellerAvatar }} style={styles.headerAvatar} />
+        <View style={{ flex: 1 }}>
           <Text style={styles.headerTitle}>{sellerName}</Text>
           <Text style={styles.headerSub}>Distance: {distance}</Text>
         </View>
-
-        {/* spacer so title stays centered */}
-        <View style={{ width: 40 }} />
       </View>
 
       {/* Listing summary card */}
       <View style={styles.summary}>
+        <Image source={{ uri: productImage }} style={styles.thumb} />
         <View style={{ flex: 1 }}>
           <Text style={styles.summaryTitle}>{listingTitle}</Text>
-          <Text style={styles.summaryMeta}>
-            <Text style={{ fontWeight: "900" }}>Condition:</Text> {condition}
-          </Text>
+          <Text style={styles.summaryMeta}>Condition: {condition}</Text>
         </View>
-
-        {/* small thumb placeholder like your mock */}
-        <View style={styles.thumb} />
       </View>
 
       <KeyboardAvoidingView
@@ -181,19 +114,6 @@ export default function Chat() {
 
         {/* Input bar */}
         <View style={styles.inputBar}>
-          <Pressable
-            style={styles.iconCircle}
-            onPress={handleMicPress}
-            accessibilityRole="button"
-            accessibilityLabel={isListening ? "Stop listening" : "Voice message"}
-          >
-            <Ionicons
-              name={isListening ? "mic" : "mic-outline"}
-              size={18}
-              color={isListening ? "#E53935" : "#111"}
-            />
-          </Pressable>
-
           <TextInput
             style={styles.textInput}
             placeholder="Send a message..."
@@ -219,12 +139,12 @@ export default function Chat() {
       <View style={styles.footerLinks}>
         <Pressable style={styles.linkRow} onPress={() => console.log("Report")}>
           <Ionicons name="flag-outline" size={18} color="#111" />
-          <Text style={styles.linkText}>Report “{sellerName}”</Text>
+          <Text style={styles.linkText}>Report "{sellerName}"</Text>
         </Pressable>
 
         <Pressable style={styles.linkRow} onPress={() => console.log("Block")}>
           <Ionicons name="ban-outline" size={18} color="#111" />
-          <Text style={styles.linkText}>Block “{sellerName}”</Text>
+          <Text style={styles.linkText}>Block "{sellerName}"</Text>
         </Pressable>
       </View>
     </SafeAreaView>
@@ -248,6 +168,13 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
+  },
+  headerAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#eee",
+    marginRight: 12,
   },
   headerTitle: { fontSize: 16, fontWeight: "900", color: "#111" },
   headerSub: { marginTop: 2, fontSize: 12, color: "#666" },
@@ -289,14 +216,6 @@ const styles = StyleSheet.create({
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: "#eee",
     backgroundColor: "#fff",
-  },
-  iconCircle: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: "#f1f1f1",
-    alignItems: "center",
-    justifyContent: "center",
   },
   textInput: {
     flex: 1,

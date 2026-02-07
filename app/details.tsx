@@ -10,6 +10,7 @@ import {
     Text,
     View,
 } from "react-native";
+import MapView, { Marker } from "react-native-maps";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 type Listing = {
@@ -25,27 +26,123 @@ type Listing = {
   images: string[];
 };
 
+const AVATARS = {
+  alex: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=60",
+  sarah: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=120&q=60",
+  mike: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=120&q=60",
+  emma: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=120&q=60",
+  james: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=120&q=60",
+  lisa: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=120&q=60",
+};
+
 const LISTINGS: Listing[] = [
+  // Chess Board
   {
-    id: "1",
-    title: "Wooden Chess board",
+    id: "chess-1",
+    title: "Wooden Chess Board",
     condition: "Excellent - barely used",
     details:
-      "Beautifully crafted wooden chess board with polished finish and full set of sturdy pieces. Used only a few times and kept in great condition.",
+      "Beautifully crafted wooden chess board with polished finish and full set of sturdy pieces. Includes carved wooden pieces and magnetic board with portable design. Used only a few times and kept in great condition.",
     distanceKm: 1.2,
     rating: 4.93,
     reviewCount: 31,
-    ownerName: "Alex Mille",
-    ownerAvatarUrl:
-      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=120&q=60",
+    ownerName: "Alex Miller",
+    ownerAvatarUrl: AVATARS.alex,
     images: [
-      "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?auto=format&fit=crop&w=900&q=60",
-      "https://images.unsplash.com/photo-1542728928-1411f9c6f1b7?auto=format&fit=crop&w=300&q=60",
-      "https://images.unsplash.com/photo-1589998059171-988d887df646?auto=format&fit=crop&w=300&q=60",
-      "https://images.unsplash.com/photo-1605733160314-4fc7dac4bb16?auto=format&fit=crop&w=300&q=60",
+      "https://images.unsplash.com/photo-1529699211952-734e80c4d42b?auto=format&fit=crop&w=900&q=60",
+      "https://images.unsplash.com/photo-1586165368502-1bad197a6461?auto=format&fit=crop&w=300&q=60",
+      "https://images.unsplash.com/photo-1580541832626-2a7131ee809f?auto=format&fit=crop&w=300&q=60",
+      "https://images.unsplash.com/photo-1528819622765-d6bcf132f793?auto=format&fit=crop&w=300&q=60",
     ],
   },
-  // You can add more mock items later
+  // Monopoly
+  {
+    id: "monopoly-1",
+    title: "Monopoly Classic Edition",
+    condition: "Like New",
+    details:
+      "Complete Monopoly set with all money, property cards, houses, hotels, and game pieces. The box shows minimal wear and all components are in excellent condition. Perfect for family game nights!",
+    distanceKm: 2.1,
+    rating: 4.78,
+    reviewCount: 24,
+    ownerName: "Mike Johnson",
+    ownerAvatarUrl: AVATARS.mike,
+    images: [
+      "https://images.unsplash.com/photo-1611891487122-207579d67d98?auto=format&fit=crop&w=900&q=60",
+      "https://images.unsplash.com/photo-1632501641765-e568d28b0015?auto=format&fit=crop&w=300&q=60",
+      "https://images.unsplash.com/photo-1566694271355-c9a556a5c6e0?auto=format&fit=crop&w=300&q=60",
+    ],
+  },
+  // Catan
+  {
+    id: "catan-1",
+    title: "Catan Board Game",
+    condition: "Like New - all pieces intact",
+    details:
+      "Complete Settlers of Catan game with all resource cards, development cards, hex tiles, and game pieces. Played only twice and stored carefully. Great strategy game for 3-4 players!",
+    distanceKm: 2.4,
+    rating: 4.85,
+    reviewCount: 19,
+    ownerName: "James Taylor",
+    ownerAvatarUrl: AVATARS.james,
+    images: [
+      "https://images.unsplash.com/photo-1563941433-b6b9b3c3e5b8?auto=format&fit=crop&w=900&q=60",
+      "https://images.unsplash.com/photo-1632501641765-e568d28b0015?auto=format&fit=crop&w=300&q=60",
+      "https://images.unsplash.com/photo-1611891487122-207579d67d98?auto=format&fit=crop&w=300&q=60",
+    ],
+  },
+  // UNO
+  {
+    id: "uno-1",
+    title: "UNO Card Game",
+    condition: "New",
+    details:
+      "Brand new sealed UNO card game pack. Classic version with all 108 cards. Perfect for family gatherings and parties. Easy to learn, fun for all ages!",
+    distanceKm: 0.8,
+    rating: 4.91,
+    reviewCount: 15,
+    ownerName: "Sarah Chen",
+    ownerAvatarUrl: AVATARS.sarah,
+    images: [
+      "https://images.unsplash.com/photo-1612404730960-5c71577fca11?auto=format&fit=crop&w=900&q=60",
+      "https://images.unsplash.com/photo-1585314062340-f1a5a7c9328d?auto=format&fit=crop&w=300&q=60",
+    ],
+  },
+  // Scrabble
+  {
+    id: "scrabble-1",
+    title: "Scrabble Deluxe",
+    condition: "Excellent",
+    details:
+      "Deluxe Scrabble with rotating board and raised grid to keep tiles in place. All 100 letter tiles included with tile bag. Perfect for word game lovers!",
+    distanceKm: 1.5,
+    rating: 4.89,
+    reviewCount: 22,
+    ownerName: "Lisa Park",
+    ownerAvatarUrl: AVATARS.lisa,
+    images: [
+      "https://images.unsplash.com/photo-1585504198199-20277593b94f?auto=format&fit=crop&w=900&q=60",
+      "https://images.unsplash.com/photo-1606503153255-59d8b8b82176?auto=format&fit=crop&w=300&q=60",
+    ],
+  },
+  // Puzzle
+  {
+    id: "puzzle-1",
+    title: "1000 Piece Jigsaw Puzzle",
+    condition: "New in box",
+    details:
+      "Beautiful landscape jigsaw puzzle with 1000 pieces. Sealed in original box, never opened. High quality pieces with vibrant colors. Great for relaxing weekends!",
+    distanceKm: 1.8,
+    rating: 4.88,
+    reviewCount: 12,
+    ownerName: "Emma Wilson",
+    ownerAvatarUrl: AVATARS.emma,
+    images: [
+      "https://images.unsplash.com/photo-1547721064-da6cfb341d50?auto=format&fit=crop&w=900&q=60",
+      "https://images.unsplash.com/photo-1494059980473-813e73ee784b?auto=format&fit=crop&w=300&q=60",
+      "https://images.unsplash.com/photo-1591991731833-b4807cf7ef94?auto=format&fit=crop&w=300&q=60",
+    ],
+  },
 ];
 
 function Stars({ rating }: { rating: number }) {
@@ -65,9 +162,21 @@ function Stars({ rating }: { rating: number }) {
 }
 
 function AvailabilityGrid() {
-  // Simple “visual” grid placeholder like your mock
   const cols = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const rows = ["9 AM", "10 AM", "11 AM", "12 PM", "1 PM", "2 PM", "3 PM", "4 PM", "5 PM"];
+  
+  // Sample availability: true = available (shaded green)
+  const availability: Record<string, Record<string, boolean>> = {
+    "9 AM": { Mon: true, Tue: true, Wed: true, Thu: true, Fri: true },
+    "10 AM": { Mon: true, Tue: true, Wed: true, Thu: true, Fri: true },
+    "11 AM": { Tue: true, Wed: true, Thu: true },
+    "12 PM": { Wed: true },
+    "1 PM": { Wed: true, Sat: true },
+    "2 PM": { Sat: true, Sun: true },
+    "3 PM": { Sat: true, Sun: true },
+    "4 PM": { Fri: true, Sat: true },
+    "5 PM": { Fri: true },
+  };
 
   return (
     <View style={styles.grid}>
@@ -86,7 +195,13 @@ function AvailabilityGrid() {
             <Text style={styles.gridTimeText}>{r}</Text>
           </View>
           {cols.map((c) => (
-            <View key={c} style={styles.gridCell} />
+            <View 
+              key={c} 
+              style={[
+                styles.gridCell,
+                availability[r]?.[c] && styles.gridCellAvailable,
+              ]} 
+            />
           ))}
         </View>
       ))}
@@ -217,9 +332,31 @@ export default function Details() {
           {/* Location */}
           <Text style={styles.sectionTitle}>Location</Text>
           <View style={styles.mapCard}>
-            <View style={styles.mapPlaceholder}>
-              <Ionicons name="location-sharp" size={18} color="#111" />
-              <Text style={{ color: "#111", fontWeight: "700" }}>Clayton</Text>
+            <MapView
+              style={styles.locationMap}
+              initialRegion={{
+                latitude: -37.9152,
+                longitude: 145.1300,
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.01,
+              }}
+              scrollEnabled={false}
+              zoomEnabled={true}
+              pitchEnabled={false}
+              rotateEnabled={false}
+            >
+              <Marker
+                coordinate={{
+                  latitude: -37.9152,
+                  longitude: 145.1300,
+                }}
+                title="Clayton"
+                description="Pickup location"
+              />
+            </MapView>
+            <View style={styles.locationInfo}>
+              <Ionicons name="location-sharp" size={16} color="#111" />
+              <Text style={styles.locationText}>Clayton, VIC</Text>
             </View>
           </View>
 
@@ -233,7 +370,17 @@ export default function Details() {
       <View style={styles.bottomCta}>
         <Pressable
           style={styles.messageBtn}
-          onPress={() => console.log("Open chat later")}
+          onPress={() =>
+            router.push({
+              pathname: "/chat",
+              params: {
+                sellerName: item.ownerName,
+                distance: `${item.distanceKm} km`,
+                listingTitle: item.title,
+                condition: item.condition,
+              },
+            })
+          }
           accessibilityRole="button"
           accessibilityLabel="Send a message"
         >
@@ -339,6 +486,22 @@ const styles = StyleSheet.create({
     gap: 6,
     backgroundColor: "#f4f4f4",
   },
+  locationMap: {
+    width: "100%",
+    height: 150,
+  },
+  locationInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    padding: 12,
+    backgroundColor: "#fff",
+  },
+  locationText: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#111",
+  },
 
   grid: {
     marginTop: 10,
@@ -376,6 +539,9 @@ const styles = StyleSheet.create({
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: "#eee",
     backgroundColor: "#fff",
+  },
+  gridCellAvailable: {
+    backgroundColor: "#C8E6C9",
   },
 
   bottomCta: {

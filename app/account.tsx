@@ -21,11 +21,10 @@ type MenuItem = {
 
 const MENU_ITEMS: MenuItem[] = [
   { icon: "person-outline", label: "Edit Profile", onPress: () => router.push("/profile") },
-  { icon: "list-outline", label: "My Listings" },
+  { icon: "list-outline", label: "My Listings", onPress: () => router.push("/myListings") },
   { icon: "swap-horizontal-outline", label: "My Deals" },
   { icon: "git-pull-request-outline", label: "My Requests", badge: "1" },
   { icon: "heart-outline", label: "My Wishlist" },
-  { icon: "calendar-outline", label: "My Availability" },
   { icon: "chatbubbles-outline", label: "My Chats" },
   { icon: "shield-checkmark-outline", label: "Verification" },
   { icon: "hand-left-outline", label: "Privacy" },

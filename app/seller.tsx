@@ -9,6 +9,7 @@ import {
     Text,
     View,
 } from "react-native";
+import MapView, { Marker } from "react-native-maps";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 type Review = {
@@ -48,12 +49,12 @@ const SELLERS: Seller[] = [
     id: "alex-1",
     name: "Alex Miller",
     avatarUrl:
-      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=200&q=60",
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=60",
     rating: 4.93,
     reviewCount: 31,
     swappingSince: "2022",
     about:
-      "Hey, I’m Alex Miller. I’ve been part of the swapping community since 2022 and have completed more than 30 swaps. I’ve always loved games that make you think—especially chess, puzzles, and strategy challenges. Outside of gaming, I enjoy weekend markets, coffee with friends, and finding creative ways to reuse and share things instead of buying new. I’m easy to reach, always on time, and believe good swaps come from clear communication and a bit of trust between people.",
+      "Hey, I'm Alex Miller. I've been part of the swapping community since 2022 and have completed more than 30 swaps. I love strategy games—especially chess, puzzles, and Catan. Outside of gaming, I enjoy weekend markets and coffee with friends.",
     lookingFor: "Board games, Card sets",
     speaks: "English",
     livesIn: "Melbourne, Australia",
@@ -65,7 +66,7 @@ const SELLERS: Seller[] = [
           "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=60",
         rating: 5,
         timeAgo: "1 month ago",
-        text: "Alex kept me updated from start to finish and even offered to meet halfway. Really trustworthy and respectful. 10/10 experience.",
+        text: "Alex kept me updated from start to finish and even offered to meet halfway. Really trustworthy. 10/10 experience.",
       },
       {
         id: "r2",
@@ -74,7 +75,7 @@ const SELLERS: Seller[] = [
           "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=60",
         rating: 5,
         timeAgo: "2 months ago",
-        text: "Quick replies and very polite. The chess board was exactly as described and in perfect condition. Would definitely swap again!",
+        text: "Quick replies and very polite. The chess board was exactly as described. Would definitely swap again!",
       },
       {
         id: "r3",
@@ -83,7 +84,7 @@ const SELLERS: Seller[] = [
           "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=60",
         rating: 5,
         timeAgo: "3 months ago",
-        text: "Swap went perfectly. Alex is organized, punctual, and genuinely cares about fair trading. Highly recommend!",
+        text: "Alex is organized, punctual, and genuinely cares about fair trading. Highly recommend!",
       },
     ],
     activeListings: [
@@ -91,26 +92,280 @@ const SELLERS: Seller[] = [
         id: "l1",
         title: "Wooden Chess Board",
         condition: "Excellent – barely used",
-        details:
-          "Includes carved wooden pieces and magnetic board; portable design",
-        imageUrl:
-          "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?auto=format&fit=crop&w=600&q=60",
+        details: "Includes carved wooden pieces and magnetic board; portable design",
+        imageUrl: "https://images.unsplash.com/photo-1529699211952-734e80c4d42b?auto=format&fit=crop&w=600&q=60",
       },
       {
         id: "l2",
-        title: "Catan: Trade, Build, Settle",
+        title: "Catan Board Game",
         condition: "Like new – all pieces intact",
-        details: "All pieces included, played twice only",
-        imageUrl:
-          "https://images.unsplash.com/photo-1612036781124-8472a73e94ea?auto=format&fit=crop&w=600&q=60",
+        details: "Complete with all resources, development cards, and rulebook",
+        imageUrl: "https://images.unsplash.com/photo-1563941433-b6b9b3c3e5b8?auto=format&fit=crop&w=600&q=60",
       },
       {
         id: "l3",
-        title: "Monopoly Deal (Card Game)",
-        condition: "Used once",
-        details: "Compact, fast-paced Monopoly version",
-        imageUrl:
-          "https://images.unsplash.com/photo-1615471618985-971989c08a0b?auto=format&fit=crop&w=600&q=60",
+        title: "1000 Piece Jigsaw Puzzle",
+        condition: "New in box",
+        details: "Beautiful landscape puzzle, sealed and never opened",
+        imageUrl: "https://images.unsplash.com/photo-1547721064-da6cfb341d50?auto=format&fit=crop&w=600&q=60",
+      },
+    ],
+  },
+  {
+    id: "sarah-1",
+    name: "Sarah Chen",
+    avatarUrl:
+      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=60",
+    rating: 4.87,
+    reviewCount: 24,
+    swappingSince: "2021",
+    about:
+      "Hi! I'm Sarah. I love card games and puzzles—anything that brings people together for a fun evening. I take great care of my games and expect the same from swap partners.",
+    lookingFor: "Card games, Puzzles, Word games",
+    speaks: "English, Mandarin",
+    livesIn: "Sydney, Australia",
+    reviews: [
+      {
+        id: "r1",
+        name: "Michael",
+        avatarUrl:
+          "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=200&q=60",
+        rating: 5,
+        timeAgo: "2 weeks ago",
+        text: "Sarah was super friendly and the UNO cards were in perfect condition!",
+      },
+      {
+        id: "r2",
+        name: "Amanda",
+        avatarUrl:
+          "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=200&q=60",
+        rating: 5,
+        timeAgo: "1 month ago",
+        text: "Great communication and the puzzle had all pieces. Very happy!",
+      },
+    ],
+    activeListings: [
+      {
+        id: "l1",
+        title: "UNO Card Game",
+        condition: "Like new",
+        details: "Classic UNO with all 108 cards, played a few times only",
+        imageUrl: "https://images.unsplash.com/photo-1612404730960-5c71577fca11?auto=format&fit=crop&w=600&q=60",
+      },
+      {
+        id: "l2",
+        title: "Chess Set",
+        condition: "Good",
+        details: "Standard plastic chess set, great for beginners",
+        imageUrl: "https://images.unsplash.com/photo-1586165368502-1bad197a6461?auto=format&fit=crop&w=600&q=60",
+      },
+      {
+        id: "l3",
+        title: "Scrabble Classic",
+        condition: "Excellent",
+        details: "All 100 tiles included, board in great condition",
+        imageUrl: "https://images.unsplash.com/photo-1585504198199-20277593b94f?auto=format&fit=crop&w=600&q=60",
+      },
+    ],
+  },
+  {
+    id: "mike-1",
+    name: "Mike Johnson",
+    avatarUrl:
+      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=60",
+    rating: 4.78,
+    reviewCount: 19,
+    swappingSince: "2023",
+    about:
+      "G'day! I'm Mike. Big fan of classic board games like Monopoly and Scrabble. Always looking to trade for new games to play with the family on weekends.",
+    lookingFor: "Family games, Strategy games",
+    speaks: "English",
+    livesIn: "Brisbane, Australia",
+    reviews: [
+      {
+        id: "r1",
+        name: "Tom",
+        avatarUrl:
+          "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=60",
+        rating: 5,
+        timeAgo: "3 weeks ago",
+        text: "Mike is a legend! Monopoly was complete and in great shape.",
+      },
+    ],
+    activeListings: [
+      {
+        id: "l1",
+        title: "Monopoly Classic",
+        condition: "Good",
+        details: "Complete set with all money, properties, and pieces",
+        imageUrl: "https://images.unsplash.com/photo-1611891487122-207579d67d98?auto=format&fit=crop&w=600&q=60",
+      },
+      {
+        id: "l2",
+        title: "Playing Cards Premium",
+        condition: "New",
+        details: "Poker-quality cards with elegant design, sealed pack",
+        imageUrl: "https://images.unsplash.com/photo-1585314062340-f1a5a7c9328d?auto=format&fit=crop&w=600&q=60",
+      },
+      {
+        id: "l3",
+        title: "Scrabble Deluxe",
+        condition: "Excellent",
+        details: "Rotating board with raised grid, all tiles included",
+        imageUrl: "https://images.unsplash.com/photo-1606503153255-59d8b8b82176?auto=format&fit=crop&w=600&q=60",
+      },
+    ],
+  },
+  {
+    id: "emma-1",
+    name: "Emma Wilson",
+    avatarUrl:
+      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=200&q=60",
+    rating: 4.65,
+    reviewCount: 15,
+    swappingSince: "2023",
+    about:
+      "Hey there! I'm Emma. I collect puzzles and brain teasers. Love finding unique games that challenge the mind. Open to fair trades!",
+    lookingFor: "Puzzles, Brain teasers, Logic games",
+    speaks: "English",
+    livesIn: "Perth, Australia",
+    reviews: [
+      {
+        id: "r1",
+        name: "David",
+        avatarUrl:
+          "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=60",
+        rating: 4,
+        timeAgo: "1 month ago",
+        text: "Good swap, puzzle was as described. Emma was easy to work with.",
+      },
+    ],
+    activeListings: [
+      {
+        id: "l1",
+        title: "3D Wooden Puzzle",
+        condition: "Like new",
+        details: "Challenging mechanical puzzle, great brain teaser",
+        imageUrl: "https://images.unsplash.com/photo-1591991731833-b4807cf7ef94?auto=format&fit=crop&w=600&q=60",
+      },
+      {
+        id: "l2",
+        title: "Chess Board Travel Set",
+        condition: "Good",
+        details: "Compact travel chess with magnetic pieces",
+        imageUrl: "https://images.unsplash.com/photo-1580541832626-2a7131ee809f?auto=format&fit=crop&w=600&q=60",
+      },
+      {
+        id: "l3",
+        title: "Jigsaw Puzzle 500pc",
+        condition: "Excellent",
+        details: "Nature scene puzzle, all pieces complete",
+        imageUrl: "https://images.unsplash.com/photo-1494059980473-813e73ee784b?auto=format&fit=crop&w=600&q=60",
+      },
+    ],
+  },
+  {
+    id: "james-1",
+    name: "James Taylor",
+    avatarUrl:
+      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=200&q=60",
+    rating: 4.92,
+    reviewCount: 28,
+    swappingSince: "2021",
+    about:
+      "I'm James, a board game enthusiast. Particularly love Catan and strategy games. I have a growing collection and always keen to swap duplicates for new experiences.",
+    lookingFor: "Strategy games, Expansion packs",
+    speaks: "English",
+    livesIn: "Adelaide, Australia",
+    reviews: [
+      {
+        id: "r1",
+        name: "Rachel",
+        avatarUrl:
+          "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=60",
+        rating: 5,
+        timeAgo: "2 weeks ago",
+        text: "James is fantastic! The Catan expansion was perfect. Highly recommend!",
+      },
+      {
+        id: "r2",
+        name: "Ben",
+        avatarUrl:
+          "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=60",
+        rating: 5,
+        timeAgo: "1 month ago",
+        text: "Super smooth swap, great communication throughout.",
+      },
+    ],
+    activeListings: [
+      {
+        id: "l1",
+        title: "Catan Expansion Pack",
+        condition: "Excellent",
+        details: "Cities & Knights expansion, adds depth to base game",
+        imageUrl: "https://images.unsplash.com/photo-1566694271355-c9a556a5c6e0?auto=format&fit=crop&w=600&q=60",
+      },
+      {
+        id: "l2",
+        title: "Monopoly Deluxe Edition",
+        condition: "Like new",
+        details: "Special edition with wooden hotels and metal tokens",
+        imageUrl: "https://images.unsplash.com/photo-1632501641765-e568d28b0015?auto=format&fit=crop&w=600&q=60",
+      },
+      {
+        id: "l3",
+        title: "Scrabble Travel",
+        condition: "New",
+        details: "Compact travel size, magnetic tiles stay in place",
+        imageUrl: "https://images.unsplash.com/photo-1612404730960-5c71577fca11?auto=format&fit=crop&w=600&q=60",
+      },
+    ],
+  },
+  {
+    id: "lisa-1",
+    name: "Lisa Park",
+    avatarUrl:
+      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=60",
+    rating: 4.45,
+    reviewCount: 12,
+    swappingSince: "2024",
+    about:
+      "Hi, I'm Lisa! New to the swapping community but excited to trade. I have some games my kids have outgrown and looking for new ones to enjoy together.",
+    lookingFor: "Family games, Kids games",
+    speaks: "English, Korean",
+    livesIn: "Melbourne, Australia",
+    reviews: [
+      {
+        id: "r1",
+        name: "Karen",
+        avatarUrl:
+          "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=200&q=60",
+        rating: 4,
+        timeAgo: "3 weeks ago",
+        text: "Nice swap with Lisa. Monopoly was in good condition as described.",
+      },
+    ],
+    activeListings: [
+      {
+        id: "l1",
+        title: "UNO Flip",
+        condition: "Excellent",
+        details: "Double-sided cards for extra fun, complete set",
+        imageUrl: "https://images.unsplash.com/photo-1606503153255-59d8b8b82176?auto=format&fit=crop&w=600&q=60",
+      },
+      {
+        id: "l2",
+        title: "Monopoly Junior",
+        condition: "Good",
+        details: "Kid-friendly version, all pieces included",
+        imageUrl: "https://images.unsplash.com/photo-1611891487122-207579d67d98?auto=format&fit=crop&w=600&q=60",
+      },
+      {
+        id: "l3",
+        title: "Puzzle Set for Kids",
+        condition: "Like new",
+        details: "3 colorful puzzles (24, 48, 100 pieces)",
+        imageUrl: "https://images.unsplash.com/photo-1494059980473-813e73ee784b?auto=format&fit=crop&w=600&q=60",
       },
     ],
   },
@@ -135,6 +390,19 @@ function Stars({ rating }: { rating: number }) {
 function AvailabilityGrid() {
   const cols = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const rows = ["9 AM", "10 AM", "11 AM", "12 PM", "1 PM", "2 PM", "3 PM", "4 PM", "5 PM"];
+  
+  // Sample availability: true = available (shaded green)
+  const availability: Record<string, Record<string, boolean>> = {
+    "9 AM": { Mon: true, Tue: true, Wed: true, Thu: true, Fri: true },
+    "10 AM": { Mon: true, Tue: true, Wed: true, Thu: true, Fri: true },
+    "11 AM": { Tue: true, Wed: true, Thu: true },
+    "12 PM": { Wed: true },
+    "1 PM": { Wed: true, Sat: true },
+    "2 PM": { Sat: true, Sun: true },
+    "3 PM": { Sat: true, Sun: true },
+    "4 PM": { Fri: true, Sat: true },
+    "5 PM": { Fri: true },
+  };
 
   return (
     <View style={styles.grid}>
@@ -153,7 +421,13 @@ function AvailabilityGrid() {
             <Text style={styles.gridTimeText}>{r}</Text>
           </View>
           {cols.map((c) => (
-            <View key={c} style={styles.gridCell} />
+            <View 
+              key={c} 
+              style={[
+                styles.gridCell,
+                availability[r]?.[c] && styles.gridCellAvailable,
+              ]} 
+            />
           ))}
         </View>
       ))}
@@ -269,7 +543,15 @@ export default function Seller() {
 
             <Pressable
               style={styles.grayBtn}
-              onPress={() => console.log("Show all reviews later")}
+              onPress={() =>
+                router.push({
+                  pathname: "/reviews",
+                  params: {
+                    sellerId: seller.id,
+                    sellerName: seller.name,
+                  },
+                })
+              }
             >
               <Text style={styles.grayBtnText}>Show All Reviews</Text>
             </Pressable>
@@ -311,7 +593,15 @@ export default function Seller() {
 
             <Pressable
               style={styles.grayBtn}
-              onPress={() => console.log("Show all listings later")}
+              onPress={() =>
+                router.push({
+                  pathname: "/sellerListings",
+                  params: {
+                    sellerId: seller.id,
+                    sellerName: seller.name,
+                  },
+                })
+              }
             >
               <Text style={styles.grayBtnText}>Show All Listings</Text>
             </Pressable>
@@ -322,9 +612,31 @@ export default function Seller() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Location</Text>
           <View style={styles.mapCard}>
-            <View style={styles.mapPlaceholder}>
-              <Ionicons name="location-sharp" size={18} color="#111" />
-              <Text style={{ color: "#111", fontWeight: "800" }}>Clayton</Text>
+            <MapView
+              style={styles.locationMap}
+              initialRegion={{
+                latitude: -37.9152,
+                longitude: 145.1300,
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.01,
+              }}
+              scrollEnabled={false}
+              zoomEnabled={true}
+              pitchEnabled={false}
+              rotateEnabled={false}
+            >
+              <Marker
+                coordinate={{
+                  latitude: -37.9152,
+                  longitude: 145.1300,
+                }}
+                title="Clayton"
+                description="Pickup location"
+              />
+            </MapView>
+            <View style={styles.locationInfo}>
+              <Ionicons name="location-sharp" size={16} color="#111" />
+              <Text style={styles.locationText}>Clayton, VIC</Text>
             </View>
           </View>
         </View>
@@ -380,8 +692,15 @@ export default function Seller() {
         <Pressable
           style={styles.messageBtn}
           onPress={() => {
-            console.log("Send message pressed");
-            router.push("/chat");
+            router.push({
+              pathname: "/chat",
+              params: {
+                sellerName: seller.name,
+                distance: "1.2 km",
+                listingTitle: seller.activeListings[0]?.title || "Item",
+                condition: seller.activeListings[0]?.condition || "Good",
+              },
+            });
           }}
         >
           <Text style={styles.messageBtnText}>Send A Message</Text>
@@ -511,6 +830,22 @@ const styles = StyleSheet.create({
     gap: 6,
     backgroundColor: "#f4f4f4",
   },
+  locationMap: {
+    width: "100%",
+    height: 150,
+  },
+  locationInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    padding: 12,
+    backgroundColor: "#fff",
+  },
+  locationText: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#111",
+  },
 
   grid: {
     borderRadius: 14,
@@ -547,6 +882,9 @@ const styles = StyleSheet.create({
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: "#eee",
     backgroundColor: "#fff",
+  },
+  gridCellAvailable: {
+    backgroundColor: "#C8E6C9",
   },
 
   linkRow: {

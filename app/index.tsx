@@ -10,11 +10,6 @@ import BulbaMap from "../components/map";
 export default function Index() {
   const insets = useSafeAreaInsets();
 
-  const handleMicPress = () => {
-    // Navigate to search page where user can type
-    router.push("/search");
-  };
-
   return (
     <View style={styles.root}>
       {/* STATUS BAR */}
@@ -42,17 +37,6 @@ export default function Index() {
             editable={false}
             pointerEvents="none"
           />
-
-          <Pressable
-            onPress={(e) => {
-              e.stopPropagation();
-              handleMicPress();
-            }}
-            hitSlop={12}
-            accessibilityLabel="Voice search"
-          >
-            <Ionicons name="mic-outline" size={18} color="#666" />
-          </Pressable>
         </Pressable>
       </View>
     </View>

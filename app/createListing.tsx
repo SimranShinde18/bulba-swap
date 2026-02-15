@@ -40,8 +40,17 @@ type SelectedLocation = {
   lng?: number;
 };
 
+type ListingMode = "swap" | "donate";
+
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const;
 const TIMES = ["9 AM", "10 AM", "11 AM", "12 PM", "1 PM", "2 PM", "3 PM", "4 PM", "5 PM"] as const;
+
+// Tags for what user is looking to swap for
+const SWAP_TAGS = [
+  "Chess", "UNO", "Monopoly", "Catan", "Scrabble", 
+  "Puzzle", "Card Games", "Strategy", "Family Games", "Party Games",
+  "Kids Games", "Classic Games", "Other"
+] as const;
 
 // Helper to generate a key for each cell
 const cellKey = (day: string, time: string) => `${day}__${time}`;
@@ -49,6 +58,10 @@ const cellKey = (day: string, time: string) => `${day}__${time}`;
 export default function CreateListing() {
   const scrollViewRef = React.useRef<ScrollView>(null);
   const locationSectionY = React.useRef<number>(0);
+  
+  const [listingMode, setListingMode] = useState<ListingMode | null>(null);
+  const [selectedSwapTags, setSelectedSwapTags] = useState<Set<string>>(new Set());
+  const [pickupNotes, setPickupNotes] = useState("");
   
   const [images, setImages] = useState<PickedImage[]>([]);
   const [itemName, setItemName] = useState("");
@@ -263,6 +276,117 @@ export default function CreateListing() {
           automaticallyAdjustKeyboardInsets={true}
         >
           <Text style={styles.requiredNote}>Fields marked * are required</Text>
+
+          {/* LISTING MODE SELECTION */}
+          <View style={styles.section}>
+            <Text style={styles.label}>
+              What do you want to do? <Text style={styles.required}>*</Text>
+            </Text>
+            <View style={styles.modeOptions}>
+              <Pressable
+                style={[
+                  styles.modeCard,
+                  listingMode === "swap" && styles.modeCardActive,
+                ]}
+                onPress={() => setListingMode("swap")}
+              >
+                <Ionicons
+                  name="swap-horizontal"
+                  size={32}
+                  color={listingMode === "swap" ? "#4CAF50" : "#888"}
+                />
+                <Text
+                  style={[
+                    styles.modeTitle,
+                    listingMode === "swap" && styles.modeTitleActive,
+                  ]}
+                >
+                  Swap
+                </Text>
+                <Text style={styles.modeSub}>Exchange for another game</Text>
+              </Pressable>
+
+              <Pressable
+                style={[
+                  styles.modeCard,
+                  listingMode === "donate" && styles.modeCardActive,
+                ]}
+                onPress={() => setListingMode("donate")}
+              >
+                <Ionicons
+                  name="gift"
+                  size={32}
+                  color={listingMode === "donate" ? "#4CAF50" : "#888"}
+                />
+                <Text
+                  style={[
+                    styles.modeTitle,
+                    listingMode === "donate" && styles.modeTitleActive,
+                  ]}
+                >
+                  Donate
+                </Text>
+                <Text style={styles.modeSub}>Give away for free</Text>
+              </Pressable>
+            </View>
+            {submittedOnce && !listingMode && (
+              <Text style={styles.errorText}>Please select Swap or Donate</Text>
+            )}
+          </View>
+
+          {/* SWAP TAGS (only if swap mode) */}
+          {listingMode === "swap" && (
+            <View style={styles.section}>
+              <Text style={styles.label}>Looking to swap for:</Text>
+              <Text style={styles.helperTop}>Select what games you'd accept</Text>
+              <View style={styles.tagGrid}>
+                {SWAP_TAGS.map((tag) => (
+                  <Pressable
+                    key={tag}
+                    style={[
+                      styles.tagChip,
+                      selectedSwapTags.has(tag) && styles.tagChipActive,
+                    ]}
+                    onPress={() =>
+                      setSelectedSwapTags((prev) => {
+                        const next = new Set(prev);
+                        if (next.has(tag)) {
+                          next.delete(tag);
+                        } else {
+                          next.add(tag);
+                        }
+                        return next;
+                      })
+                    }
+                  >
+                    <Text
+                      style={[
+                        styles.tagText,
+                        selectedSwapTags.has(tag) && styles.tagTextActive,
+                      ]}
+                    >
+                      {tag}
+                    </Text>
+                  </Pressable>
+                ))}
+              </View>
+            </View>
+          )}
+
+          {/* PICKUP NOTES (only if donate mode) */}
+          {listingMode === "donate" && (
+            <View style={styles.section}>
+              <Text style={styles.label}>Pickup Details:</Text>
+              <Text style={styles.helperTop}>How should recipients collect?</Text>
+              <TextInput
+                style={[styles.input, styles.textAreaSm]}
+                placeholder="e.g., Front porch pickup, weekends only..."
+                value={pickupNotes}
+                onChangeText={setPickupNotes}
+                multiline
+              />
+            </View>
+          )}
 
           {/* IMAGE PICKER */}
           <View style={styles.section}>
@@ -850,6 +974,68 @@ const styles = StyleSheet.create({
   },
   locationText: { color: "#111", fontWeight: "600", flex: 1 },
   locationSubText: { color: "#666", fontSize: 12.5 },
+
+  /* Mode selection */
+  modeOptions: {
+    flexDirection: "row",
+    gap: 12,
+    marginTop: 10,
+  },
+  modeCard: {
+    flex: 1,
+    padding: 16,
+    borderRadius: 14,
+    backgroundColor: "#f8f8f8",
+    borderWidth: 2,
+    borderColor: "#e6e6e6",
+    alignItems: "center",
+    gap: 8,
+  },
+  modeCardActive: {
+    borderColor: "#4CAF50",
+    backgroundColor: "#E8F5E9",
+  },
+  modeTitle: {
+    fontSize: 16,
+    fontWeight: "800",
+    color: "#666",
+  },
+  modeTitleActive: {
+    color: "#111",
+  },
+  modeSub: {
+    fontSize: 12,
+    color: "#888",
+    textAlign: "center",
+  },
+
+  /* Swap tags */
+  tagGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+    marginTop: 10,
+  },
+  tagChip: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: "#f0f0f0",
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+  },
+  tagChipActive: {
+    backgroundColor: "#111",
+    borderColor: "#111",
+  },
+  tagText: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#555",
+  },
+  tagTextActive: {
+    color: "#fff",
+  },
 
   /* Bottom CTA */
   bottomCta: {
